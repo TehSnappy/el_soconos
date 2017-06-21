@@ -1,16 +1,16 @@
 defmodule ElSoconos.Playlist do
   defstruct [title: "", uri: "", meta: ""]
 
-@moduledoc ~S"""
-A struct containing identifying information for a Sonos playlist in the local network
+  @moduledoc ~S"""
+  A struct containing identifying information for a Sonos playlist in the local network
 
-#### The Playlist struct contains the following fields. Your data will vary.
-```elixir
-    %ElSoconos.Playlist {
-        uri: "S://DiskStation/music/playlists/test.m3u",
-        title: "test.m3u"
-    }
-"""
+  #### The Playlist struct contains the following fields. Your data will vary.
+  ```elixir
+      %ElSoconos.Playlist {
+          uri: "S://DiskStation/music/playlists/test.m3u",
+          title: "test.m3u"
+      }
+  """
 
   @doc false
   def from_python(s) do

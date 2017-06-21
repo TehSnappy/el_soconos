@@ -6,9 +6,10 @@ defmodule ElSoconos.Mixfile do
      version: "1.0.0",
      elixir: "~> 1.4",
      name: "el_soconos",
+     docs: [extras: ["README.md"]],
      description: description(),
      package: package(),
-     source_url: "https://github.com/teh_snappy/el_soconos",
+     source_url: "https://github.com/nerves-build/el_soconos",
      compilers: Mix.compilers,
      make_clean: ["clean"],
      build_embedded: Mix.env == :prod,
@@ -25,15 +26,15 @@ defmodule ElSoconos.Mixfile do
 
   defp description do
   """
-  Elixir access to the Python Soco library for controlling Sonos systems
+  Elixir access to the Python Soco library for controlling a Sonos music system
   """
   end
 
   defp package do
-    %{files: ["lib/*", "lib/python/*.py", "mix.exs", "README.md"],
+    %{files: ["lib/*", "priv/*", "mix.exs", "README.md"],
       maintainers: ["Steven Fuchs"],
       licenses: ["Apache-2.0"],
-      links: %{"GitHub" => "https://github.com/TehSnappy/el_soconos"}}
+      links: %{"GitHub" => "https://github.com/nerves-build/el_soconos"}}
   end
 
   defp deps do

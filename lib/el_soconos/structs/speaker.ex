@@ -1,22 +1,21 @@
 defmodule ElSoconos.Speaker do
   defstruct [name: "", ip: "", volume: 0, uid: "", mode: "", group_uid: "", group_coordinator_ip: ""]
 
-@moduledoc ~S"""
-A struct contining identifying information for a Sonos speaker in the local network
+  @moduledoc ~S"""
+  A struct contining identifying information for a Sonos speaker in the local network
 
-#### The Speaker struct contains the following fields. Your data will vary.
-```elixir
-    %ElSoconos.Speaker {
-        group_coordinator_ip: "10.0.1.64"
-        group_uid: "RINCON_xxxxxxxxxxxxxxx:49"
-        ip: "10.0.1.64"
-        mode: "NORMAL"
-        name: "Office"
-        uid: "RINCON_xxxxxxxxxxxxxxx"
-        volume: 30
-    }
-"""
-
+  #### The Speaker struct contains the following fields. Your data will vary.
+  ```elixir
+      %ElSoconos.Speaker {
+          group_coordinator_ip: "10.0.1.64"
+          group_uid: "RINCON_xxxxxxxxxxxxxxx:49"
+          ip: "10.0.1.64"
+          mode: "NORMAL"
+          name: "Office"
+          uid: "RINCON_xxxxxxxxxxxxxxx"
+          volume: 30
+      }
+  """
 
   @doc false
   def from_python(s) do

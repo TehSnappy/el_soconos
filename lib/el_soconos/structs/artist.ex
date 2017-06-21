@@ -3,16 +3,16 @@ defmodule ElSoconos.Artist do
 
   defstruct [title: "", uri: ""]
 
-@moduledoc ~S"""
-A struct containing identifying information for an Artist in the music library of the local Sonos network
+  @moduledoc ~S"""
+  A struct containing identifying information for an Artist in the music library of the local Sonos network
 
-#### The Favorite struct contains the following fields. Your data will vary.
-```elixir
-    %ElSoconos.Artist {
-        title: "Jimi Hendrix",
-        uri: "rincon:32399648508186355",
-    }
-"""
+  #### The Favorite struct contains the following fields. Your data will vary.
+  ```elixir
+      %ElSoconos.Artist {
+          title: "Jimi Hendrix",
+          uri: "rincon:32399648508186355",
+      }
+  """
 
   @doc false
   def from_python(s) do

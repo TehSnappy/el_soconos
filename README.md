@@ -1,21 +1,17 @@
 # el_soconos
 
-An elixir package for controlling a Sonos sound system.
-
-This is a simple wrapper around the excellent [soco](http://python-soco.com) python package. 
-
-el_soconos does not install this package, it assumes you have a working python installation and the package installed.
+An elixir package for controlling a Sonos sound system. This is a simple wrapper around the excellent [soco](http://python-soco.com) python package. el_soconos does not install this package, it assumes you have a working python installation and the SoCo library installed.
 
 el_soconos is a work in progress. It is not a complete implementation of the Soco API, but rather has been filled out to perform a few simple functions. Feature requests will be accepted, pull requests will be welcomed.
 
 Enjoy!
 
-## Installation/Usage
+## Installation
 
 Add el_soconos to your list of dependencies in mix.exs
 ```elixir
   def deps do
-    [{:el_soconos, github: "TehSnappy/el_soconos"}]
+    [{:el_soconos, "~> 1.0.0"}]
   end
 ```
 
@@ -23,7 +19,7 @@ Add el_soconos to your list of dependencies in mix.exs
 There is currently no configuration necessary for el_soconos.
 
 
-## Using el_soconos
+## Usage
 ### Querying the Sonos system
 el_soconos reports on the Sonos network through elixir's Registry module, so an elixir later than version 1.4 is required.
 
@@ -98,4 +94,3 @@ A single speaker cannot be used instead of a group, but the speaker struct conta
   ElSoconos.set_volume(a_group, 70)
   ElSoconos.set_volume(a_speaker, 20)
 ```
-  """

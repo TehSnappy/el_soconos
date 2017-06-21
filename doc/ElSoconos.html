@@ -8,7 +8,7 @@
     <title>ElSoconos – el_soconos v1.0.0</title>
     <link rel="stylesheet" href="dist/app-4ecae1abb8.css" />
     
-    <script src="dist/sidebar_items-fdc2c3eac5.js"></script>
+    <script src="dist/sidebar_items-3d39282070.js"></script>
   </head>
   <body data-type="modules">
     <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
@@ -64,7 +64,7 @@
         <small class="visible-xs">el_soconos v1.0.0</small>
         ElSoconos
         
-          <a href="https://github.com/teh_snappy/el_soconos/blob/master/lib/el_soconos.ex#L1" title="View Source" class="view-source" rel="help">
+          <a href="https://github.com/nerves-build/el_soconos/blob/master/lib/el_soconos.ex#L1" title="View Source" class="view-source" rel="help">
             <span class="icon-code" aria-hidden="true"></span>
             <span class="sr-only">View Source</span>
           </a>
@@ -73,66 +73,65 @@
 
       
         <section id="moduledoc">
-          <p>The gateway module for control of a Sonos system.</p>
-<p>There is usually not any need to call any other functions. This code is a wrapper for the excellent <a href="http://docs.python-soco.com/en/latest/index.html">Python Soco library</a></p>
+          <p>The gateway module for control of a Sonos system. This code is a wrapper for the excellent <a href="http://docs.python-soco.com/en/latest/index.html">Python Soco library</a></p>
 <h3>Querying the Sonos system</h3>
 <p>el_soconos reports on the Sonos network through elixir’s Registry module, so an elixir later than version 1.4 is required.</p>
 <p>Register for and receive these notifications like so:</p>
-<pre><code class="elixir">{:ok, _} = Registry.register(ElSoconos, &quot;el_soconos_update&quot;, [])
+<pre><code class="elixir">  {:ok, _} = Registry.register(ElSoconos, &quot;el_soconos_update&quot;, [])
 
-def handle_info({:el_soconos_update, data}, state) do
-  Map.merge(state, %{sonos: data})
-end</code></pre>
+  def handle_info({:el_soconos_update, data}, state) do
+    Map.merge(state, %{sonos: data})
+  end</code></pre>
 <p>Initiate a data scan with the following code:</p>
-<pre><code class="elixir">ElSoconos.poll_network</code></pre>
+<pre><code class="elixir">  ElSoconos.poll_network</code></pre>
 <p>The data will be returned in a map with the following keys:</p>
-<pre><code class="elixir">
+<pre><code class="elixir">  
 {
-  favorites: [
-    %ElSoconos.Favorite{
-      uri: &quot;pndrradio:32399648508186355&quot;,
-      title: &quot;The Rolling Stones Radio&quot;,
-      meta: &lt;various data&gt;
-    }
-  ],
-  groups: [
-    %ElSoconos.Group {
-      uid: &quot;RINCON_xxxxxxxxxxxxxxx:49&quot;,
-      coordinator_ip: &quot;10.0.1.64&quot;
-    }
-  ],
-  playlists: [
-    %ElSoconos.Playlist{
-      uri: &quot;S://DiskStation/music/playlists/test.m3u&quot;,
-      title: &quot;test.m3u&quot;
-    }
-  ],
-  speakers: [
-    %ElSoconos.Speaker{ 
-      group_coordinator_ip: &quot;10.0.1.64&quot;
-      group_uid: &quot;RINCON_xxxxxxxxxxxxxxx:49&quot;
-      ip: &quot;10.0.1.64&quot;
-      mode: &quot;NORMAL&quot;
-      name: &quot;Office&quot;
-      uid: &quot;RINCON_xxxxxxxxxxxxxxx&quot;
-      volume: 30
-    }
-  ]
-}</code></pre>
+    favorites: [
+      %ElSoconos.Favorite{
+        uri: &quot;pndrradio:32399648508186355&quot;,
+        title: &quot;The Rolling Stones Radio&quot;,
+        meta: &lt;various data&gt;
+      }
+    ],
+    groups: [
+      %ElSoconos.Group {
+        uid: &quot;RINCON_xxxxxxxxxxxxxxx:49&quot;,
+        coordinator_ip: &quot;10.0.1.64&quot;
+      }
+    ],
+    playlists: [
+      %ElSoconos.Playlist{
+        uri: &quot;S://DiskStation/music/playlists/test.m3u&quot;,
+        title: &quot;test.m3u&quot;
+      }
+    ],
+    speakers: [
+      %ElSoconos.Speaker{ 
+        group_coordinator_ip: &quot;10.0.1.64&quot;
+        group_uid: &quot;RINCON_xxxxxxxxxxxxxxx:49&quot;
+        ip: &quot;10.0.1.64&quot;
+        mode: &quot;NORMAL&quot;
+        name: &quot;Office&quot;
+        uid: &quot;RINCON_xxxxxxxxxxxxxxx&quot;
+        volume: 30
+      }
+    ]
+  }</code></pre>
 <p>You can query for the individual objects through the ElSoconos interface:</p>
 <pre><code class="elixir">
-a_grp = ElSoconos.get_group(group_uid)
-a_fav = ElSoconos.get_favorite(favorite_uri)
-a_spkr = ElSoconos.get_speaker(speaker_uid)</code></pre>
+  a_grp = ElSoconos.get_group(group_uid)
+  a_fav = ElSoconos.get_favorite(favorite_uri)
+  a_spkr = ElSoconos.get_speaker(speaker_uid)</code></pre>
 <h3>Controlling the Sonos system</h3>
 <p>Sources (either favorites or playlists) must be played through a group. Each speaker is in its own group it seems.</p>
 <p>A single speaker cannot be used instead of a group, but the speaker struct contains a field group_uid, which can then be used to fetch the Group.</p>
-<pre><code class="elixir">a_group = ElSoconos.get_group(a_speaker.group_uid)
-ElSoconos.play(a_group, a_favorite)
-ElSoconos.play(a_group, a_playlist)
+<pre><code class="elixir">  a_group = ElSoconos.get_group(a_speaker.group_uid)
+  ElSoconos.play(a_group, a_favorite)
+  ElSoconos.play(a_group, a_playlist)
 
-ElSoconos.set_volume(a_group, 70)
-ElSoconos.set_volume(a_speaker, 20)</code></pre>
+  ElSoconos.set_volume(a_group, 70)
+  ElSoconos.set_volume(a_speaker, 20)</code></pre>
 
         </section>
       
@@ -281,7 +280,7 @@ ElSoconos.set_volume(a_speaker, 20)</code></pre>
     </a>
     <span class="signature">add_to_group(speaker, group)</span>
     
-      <a href="https://github.com/teh_snappy/el_soconos/blob/master/lib/el_soconos.ex#L183" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/nerves-build/el_soconos/blob/master/lib/el_soconos.ex#L181" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -303,7 +302,7 @@ ElSoconos.set_volume(a_speaker, 20)</code></pre>
     </a>
     <span class="signature">get_favorite(uri)</span>
     
-      <a href="https://github.com/teh_snappy/el_soconos/blob/master/lib/el_soconos.ex#L134" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/nerves-build/el_soconos/blob/master/lib/el_soconos.ex#L132" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -325,7 +324,7 @@ ElSoconos.set_volume(a_speaker, 20)</code></pre>
     </a>
     <span class="signature">get_group(uid)</span>
     
-      <a href="https://github.com/teh_snappy/el_soconos/blob/master/lib/el_soconos.ex#L148" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/nerves-build/el_soconos/blob/master/lib/el_soconos.ex#L146" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -347,7 +346,7 @@ ElSoconos.set_volume(a_speaker, 20)</code></pre>
     </a>
     <span class="signature">get_playlist(uri)</span>
     
-      <a href="https://github.com/teh_snappy/el_soconos/blob/master/lib/el_soconos.ex#L155" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/nerves-build/el_soconos/blob/master/lib/el_soconos.ex#L153" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -369,7 +368,7 @@ ElSoconos.set_volume(a_speaker, 20)</code></pre>
     </a>
     <span class="signature">get_speaker(uid)</span>
     
-      <a href="https://github.com/teh_snappy/el_soconos/blob/master/lib/el_soconos.ex#L141" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/nerves-build/el_soconos/blob/master/lib/el_soconos.ex#L139" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -391,7 +390,7 @@ ElSoconos.set_volume(a_speaker, 20)</code></pre>
     </a>
     <span class="signature">network_state()</span>
     
-      <a href="https://github.com/teh_snappy/el_soconos/blob/master/lib/el_soconos.ex#L127" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/nerves-build/el_soconos/blob/master/lib/el_soconos.ex#L125" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -428,7 +427,7 @@ ElSoconos.set_volume(a_speaker, 20)</code></pre>
     </a>
     <span class="signature">play(group, favorite_or_playlist)</span>
     
-      <a href="https://github.com/teh_snappy/el_soconos/blob/master/lib/el_soconos.ex#L162" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/nerves-build/el_soconos/blob/master/lib/el_soconos.ex#L160" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -450,7 +449,7 @@ ElSoconos.set_volume(a_speaker, 20)</code></pre>
     </a>
     <span class="signature">poll_network()</span>
     
-      <a href="https://github.com/teh_snappy/el_soconos/blob/master/lib/el_soconos.ex#L102" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/nerves-build/el_soconos/blob/master/lib/el_soconos.ex#L100" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -473,7 +472,7 @@ ElSoconos.set_volume(a_speaker, 20)</code></pre>
     </a>
     <span class="signature">remove_from_group(speaker)</span>
     
-      <a href="https://github.com/teh_snappy/el_soconos/blob/master/lib/el_soconos.ex#L190" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/nerves-build/el_soconos/blob/master/lib/el_soconos.ex#L188" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -495,7 +494,7 @@ ElSoconos.set_volume(a_speaker, 20)</code></pre>
     </a>
     <span class="signature">set_volume(group_or_speaker, volume)</span>
     
-      <a href="https://github.com/teh_snappy/el_soconos/blob/master/lib/el_soconos.ex#L197" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/nerves-build/el_soconos/blob/master/lib/el_soconos.ex#L195" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -517,7 +516,7 @@ ElSoconos.set_volume(a_speaker, 20)</code></pre>
     </a>
     <span class="signature">stop(arg1)</span>
     
-      <a href="https://github.com/teh_snappy/el_soconos/blob/master/lib/el_soconos.ex#L176" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/nerves-build/el_soconos/blob/master/lib/el_soconos.ex#L174" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
