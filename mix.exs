@@ -20,20 +20,20 @@ defmodule ElSoconos.Mixfile do
   def application do
     [
       mod: { ElSoconos, [] },
-      applications: [:logger]
+      extra_applications: [:logger]
     ]
   end
 
   defp description do
   """
-  Elixir access to the Python Soco library for controlling a Sonos music system
+  Elixir wrapper for the Python SoCo library for querying and controlling a Sonos music system.
   """
   end
 
   defp package do
     %{files: ["lib/*", "priv/*", "mix.exs", "README.md"],
       maintainers: ["Steven Fuchs"],
-      licenses: ["Apache-2.0"],
+      licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/nerves-build/el_soconos"}}
   end
 

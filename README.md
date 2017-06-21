@@ -74,7 +74,6 @@ The data will be returned in a map with the following keys:
 ```
 You can query for the individual objects through the ElSoconos interface:
 ```elixir
-
   a_grp = ElSoconos.get_group(group_uid)
   a_fav = ElSoconos.get_favorite(favorite_uri)
   a_spkr = ElSoconos.get_speaker(speaker_uid)
@@ -94,3 +93,4 @@ A single speaker cannot be used instead of a group, but the speaker struct conta
   ElSoconos.set_volume(a_group, 70)
   ElSoconos.set_volume(a_speaker, 20)
 ```
+
