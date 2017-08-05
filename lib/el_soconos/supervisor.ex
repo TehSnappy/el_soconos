@@ -12,7 +12,8 @@ defmodule ElSoconos.Supervisor do
   def init(:ok) do
     children = [
       supervisor(Registry, [:duplicate, ElSoconos]),
-      worker(ElSoconos.Worker, [])
+      supervisor(ElSoconos.State, []),
+      supervisor(ElSoconos.Worker, [])
     ]
     supervise(children, [strategy: :one_for_one])
   end

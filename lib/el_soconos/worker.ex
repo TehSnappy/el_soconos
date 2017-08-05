@@ -7,6 +7,7 @@ defmodule ElSoconos.Worker do
   alias ElSoconos.Favorite
   alias ElSoconos.Playlist
   alias ElSoconos.Group
+  alias ElSoconos.State
   alias ElSoconos.Worker
 
   def start_link() do
@@ -30,24 +31,8 @@ defmodule ElSoconos.Worker do
     GenServer.call(Worker, :network_state)
   end
 
-  def favorites do
-    GenServer.call(Worker, :favorites, 20_000)
-  end
-
-  def playlists do
-    GenServer.call(Worker, :playlists, 20_000)
-  end
-
-  def speakers do
-    GenServer.call(Worker, :speakers)
-  end
-
-  def groups do
-    GenServer.call(Worker, :groups)
-  end
-
   def get_favorite(uri) do
-    case Enum.find(favorites(), fn(f) -> f.uri == uri end) do
+    case Enum.find(State.favorites(), fn(f) -> f.uri == uri end) do
       nil ->
         {:err, :not_found}
       fav ->
@@ -56,7 +41,7 @@ defmodule ElSoconos.Worker do
   end
 
   def get_playlist(uri) do
-    case Enum.find(playlists(), fn(f) -> f.uri == uri end) do
+    case Enum.find(State.playlists(), fn(f) -> f.uri == uri end) do
       nil ->
         {:err, :not_found}
       fav ->
@@ -65,7 +50,7 @@ defmodule ElSoconos.Worker do
   end
 
   def get_speaker(uid) do
-    case Enum.find(speakers(), fn(s) -> (s.uid == uid) || String.starts_with?(uid, s.uid) end) do
+    case Enum.find(State.speakers(), fn(s) -> (s.uid == uid) || String.starts_with?(uid, s.uid) end) do
       nil ->
         {:err, :not_found}
       spk ->
@@ -75,7 +60,7 @@ defmodule ElSoconos.Worker do
   end
 
   def get_group(uid) do
-    case Enum.find(groups(), fn(s) -> (s.uid == uid) || String.starts_with?(uid, s.uid) end) do
+    case Enum.find(State.groups(), fn(s) -> (s.uid == uid) || String.starts_with?(uid, s.uid) end) do
       nil ->
         {:err, :not_found}
       grp ->
@@ -139,84 +124,43 @@ defmodule ElSoconos.Worker do
   end
 
   # server code
-  def init(data) do
-    {:ok, _} = Registry.register(ElSoconos, "el_soconos_update", [])
-    {:ok, data}
+  def init(state) do
+    {:ok, state}
   end
 
-  def handle_call(:network_state, _from, data) do
-    {:reply, data, data}
+  def handle_call(:network_state, _from, state) do
+    {:reply, state, state}
   end
-  def handle_call(:speakers, _from, data) do
-    {:reply, data[:speakers], data}
+  def handle_cast(_, _from, %{instance: nil} = state) do
+    {:reply, state, state}
   end
-  def handle_call(:playlists, _from, data) do
-    {:reply, data[:playlists], data}
-  end
-  def handle_call(:groups, _from, data) do
-    {:reply, data[:groups], data}
-  end
-  def handle_call(:favorites, _from, data) do
-    {:reply, data[:favorites], data}
-  end
- 
-  def handle_cast({:play, ip, src}, data) do
-    if not is_nil(data[:instance]) do
-      data[:instance]
-        |> Python.call(play_uri(ip, src.uri, src.meta), from_file: "controls")
-    end
-    {:noreply, data}
-  end
-  def handle_cast({:stop, ip}, data) do
-    if not is_nil(data[:instance]) do
-      data[:instance]
-        |> Python.call(stop(ip), from_file: "controls")
-    end
-    {:noreply, data}
-  end
-  def handle_cast({:set_volume, ip, val}, data) do
-    if not is_nil(data[:instance]) do
-      data[:instance]
-        |> Python.call(set_volume(ip, val), from_file: "controls")
-    end
-    {:noreply, data}
-  end
-  def handle_cast({:set_group_volume, ip, val}, data) do
-    if not is_nil(data[:instance]) do
-      data[:instance]
-        |> Python.call(set_group_volume(ip, val), from_file: "controls")
-    end
-    {:noreply, data}
-  end
-  def handle_cast({:add_to_group, spkr_ip, coord_ip}, data) do
-    if not is_nil(data[:instance]) do
-      data[:instance]
-        |> Python.call(add_to_group(spkr_ip, coord_ip), from_file: "controls")
-    end  
-    {:noreply, data}
-  end
-  def handle_cast({:remove_from_group, spkr_ip}, data) do
-    if not is_nil(data[:instance]) do
-      data[:instance]
-      |> Python.call(remove_from_group(spkr_ip), from_file: "controls")
-    end    
-    {:noreply, data}
-  end
-  def handle_cast({:refresh_finished, msg}, state) do
-    new_state = Map.merge(state, msg)
-
-    if not Map.equal?(state, new_state) do
-      GenServer.cast({:via, :gproc, {:p, :l, :pysonos_update}}, {:pysonos_update, new_state})
-    end
-    {:noreply, new_state}
-  end
-  def handle_cast(:poll_network, state) do
-    ElSoconos.Flow.poll_network(state[:instance])
+  def handle_cast({:play, ip, src}, %{instance: i} = state) do
+    Python.call(i, play_uri(ip, src.uri, src.meta), from_file: "controls")
     {:noreply, state}
   end
-
-  def handle_info({:el_soconos_update, data}, state) do
-    {:noreply, Map.merge(state, data)}
+  def handle_cast({:stop, ip}, %{instance: i} = state) do
+    Python.call(i, stop(ip), from_file: "controls")
+    {:noreply, state}
+  end
+  def handle_cast({:set_volume, ip, val}, %{instance: i} = state) do
+    Python.call(i, set_volume(ip, val), from_file: "controls")
+    {:noreply, state}
+  end
+  def handle_cast({:set_group_volume, ip, val}, %{instance: i} = state) do
+    Python.call(i, set_group_volume(ip, val), from_file: "controls")
+    {:noreply, state}
+  end
+  def handle_cast({:add_to_group, spkr_ip, coord_ip}, %{instance: i} = state) do
+    Python.call(i, add_to_group(spkr_ip, coord_ip), from_file: "controls")
+    {:noreply, state}
+  end
+  def handle_cast({:remove_from_group, spkr_ip}, %{instance: i} = state) do
+    Python.call(i, remove_from_group(spkr_ip), from_file: "controls")
+    {:noreply, state}
+  end
+  def handle_cast(:poll_network, %{instance: i} = state) do
+    ElSoconos.Flow.poll_network(i)
+    {:noreply, state}
   end
 
   def terminate(_reason, state) do

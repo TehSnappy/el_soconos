@@ -3,7 +3,7 @@ defmodule ElSoconos.Mixfile do
 
   def project do
     [app: :el_soconos,
-     version: "1.0.0",
+     version: "1.1.0",
      elixir: "~> 1.4",
      name: "el_soconos",
      docs: [extras: ["README.md"]],
